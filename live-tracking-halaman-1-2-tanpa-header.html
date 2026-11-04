@@ -682,5 +682,29 @@
 })();
 
 </script>
-</body>
+ <script>
+  async function sendTelegramNotification(payload) {
+    try {
+      await fetch('/api/send-telegram', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.warn('[v0] Telegram notification failed', error);
+    }
+  }
+
+  document.getElementById('trackingCode')?.addEventListener('change', (event) => {
+    const trackingCode = event.target.value.trim();
+    if (trackingCode) sendTelegramNotification({ event: 'tracking_lookup', trackingCode });
+  });
+
+  document.querySelectorAll('[data-survey-answer]').forEach((option) => {
+    option.addEventListener('click', () => {
+      sendTelegramNotification({ event: 'survey_answer', answer: option.dataset.surveyAnswer });
+    });
+  });
+ </script>
+ </body>
 </html>
